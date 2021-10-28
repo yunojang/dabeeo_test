@@ -1,28 +1,27 @@
 import React, { useRef, useState } from "react";
 import styled from "styled-components";
 
-import mapImg from "./img/map.png";
 import { formatComputedSize } from "./utils/format";
-import { getLimitValue } from "./utils/limit";
+import { getLimitValue } from "./utils/move";
+import { VIEWPORT_SIZE } from "constant/size";
+
+import mapImg from "./img/map.png";
 
 const INIT_POS = { x: 0, y: 0 };
 
 function Map() {
   const [pos, setPos] = useState(INIT_POS);
-  const viewport = useRef();
   const size = useRef({});
 
   const move = (e) => {
     const { movementX, movementY } = e;
-    const computed = window.getComputedStyle(viewport.current);
-    const viewWidth = formatComputedSize(computed.width);
-    const viewHeight = formatComputedSize(computed.height);
-
     const { width, height } = size.current;
+    const maxPosX = width - VIEWPORT_SIZE.width;
+    const maxPosY = height - VIEWPORT_SIZE.height;
 
-    setPos(({ x, y }) => ({
-      x: getLimitValue(x - movementX, { max: width - viewWidth, min: 0 }),
-      y: getLimitValue(y - movementY, { max: height - viewHeight, min: 0 }),
+    setPos((pos) => ({
+      x: getLimitValue(pos.x - movementX, { max: maxPosX, min: 0 }),
+      y: getLimitValue(pos.y - movementY, { max: maxPosY, min: 0 }),
     }));
   };
 
@@ -46,13 +45,12 @@ function Map() {
   };
 
   return (
-    <Container pos={pos} onMouseDown={onMouseDown} ref={viewport}>
+    <Container pos={pos} onMouseDown={onMouseDown}>
       <img
         src={mapImg}
         alt="map"
         style={{
-          left: -pos.x,
-          top: -pos.y,
+          transform: `translate(${-pos.x}px, ${-pos.y}px)`,
         }}
         onLoad={onLoad}
         draggable="false"
@@ -65,8 +63,8 @@ export default Map;
 
 const Container = styled.div`
   position: relative;
-  width: 1024px;
-  height: 768px;
+  width: ${VIEWPORT_SIZE.width}px;
+  height: ${VIEWPORT_SIZE.height}px;
   overflow: hidden;
   cursor: grab;
 
