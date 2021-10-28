@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
-import color from "./constant/color";
-import Map from "./Components/Map";
+import color from "constant/color";
+import Map from "Components/Map";
 
 function App() {
   return (
