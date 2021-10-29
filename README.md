@@ -18,16 +18,16 @@
 
 ## ☑️ 실행 방법
 
-- Clone Project
+- **Clone Project**
   ```bash
   git clone https://github.com/yunojang/dabeeo_test.git
   ```
-- Package install (택 1)
+- **Package install (택 1)**
   ```bash
   yarn
   npm install
   ```
-- Run server (택 1)
+- **Run server (택 1)**
   ```bash
   yarn start
   npm start
@@ -42,4 +42,4 @@
 
 ## 🖥️ 실행 화면
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/873db236-0ba6-4123-9b96-ff90f40b2fec/Untitled.png)
+![image](https://user-images.githubusercontent.com/54504352/139471279-96d49a3e-f611-46f7-874c-c09d8b0b155b.png)
