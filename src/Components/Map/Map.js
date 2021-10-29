@@ -16,24 +16,19 @@ function Map() {
   const [pos, setPos] = useState(INIT_POS);
   const { state: marker, push: pushMarker, clear: clearMarker } = useArray([]);
 
-  const size = useRef({});
+  const mapSize = useRef({});
 
-  const move = ([moveX, moveY]) => {
-    const { width, height } = size.current;
+  const onMove = (e) => {
+    const { movementX, movementY } = e;
+    const { width, height } = mapSize.current;
     const maxPosX = width - VIEWPORT_SIZE.width;
     const maxPosY = height - VIEWPORT_SIZE.height;
 
     setPos((pos) => ({
-      x: getLimitValue(pos.x - moveX, { max: maxPosX, min: 0 }),
-      y: getLimitValue(pos.y - moveY, { max: maxPosY, min: 0 }),
+      x: getLimitValue(pos.x - movementX, { max: maxPosX, min: 0 }),
+      y: getLimitValue(pos.y - movementY, { max: maxPosY, min: 0 }),
     }));
   };
-
-  const onMove = (e) => {
-    const { movementX, movementY } = e;
-
-    move([movementX,movementY]);
-  }
 
   const onMouseDown = (e) => {
     if (!e.target.dataset.movable) {
@@ -41,8 +36,6 @@ function Map() {
     }
 
     const endDrag = () => {
-      // elastic move
-
       document.removeEventListener("mousemove", onMove);
       document.removeEventListener("mouseup", endDrag);
     };
@@ -54,7 +47,7 @@ function Map() {
   const onLoad = (e) => {
     const { width, height } = window.getComputedStyle(e.target);
 
-    size.current = {
+    mapSize.current = {
       width: formatComputedSize(width),
       height: formatComputedSize(height),
     };
@@ -63,7 +56,7 @@ function Map() {
   const onMarking = (e) => {
     e.preventDefault();
 
-    if (!e.target.dataset.addMarker) {
+    if (!e.target.dataset.markable) {
       return;
     }
 
@@ -85,7 +78,7 @@ function Map() {
           alt="map"
           onLoad={onLoad}
           draggable="false"
-          data-add-marker
+          data-markable
           data-movable
         />
 
