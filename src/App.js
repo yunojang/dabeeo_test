@@ -27,6 +27,5 @@ const Coantainer = styled.main`
 const Title = styled.h1`
   font-size: 24px;
   margin-bottom: 20px;
-  font-weight: normal;
   color: ${color.main};
 `;
