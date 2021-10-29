@@ -79,6 +79,8 @@ function Map() {
 
         <Marking marker={marker} />
       </MapContainer>
+
+      <ResetButton onClick={clearMarker} />
     </ViewPort>
   );
 }
