@@ -1,16 +1,21 @@
 import React, { useRef, useState } from "react";
 import styled from "styled-components";
 
+import useArray from "hooks/useArray";
 import { formatComputedSize } from "./utils/format";
 import { getLimitValue } from "./utils/move";
 import { VIEWPORT_SIZE } from "constant/size";
 
 import mapImg from "./img/map.png";
+import Marking from "./Marking";
+import ResetButton from "./ResetButton";
 
 const INIT_POS = { x: 0, y: 0 };
 
 function Map() {
   const [pos, setPos] = useState(INIT_POS);
+  const { state: marker, push: pushMarker, clear: clearMarker } = useArray([]);
+
   const size = useRef({});
 
   const move = (e) => {
@@ -25,7 +30,7 @@ function Map() {
     }));
   };
 
-  const onMouseDown = () => {
+  const onMouseDown = (e) => {
     const endDrag = () => {
       document.removeEventListener("mousemove", move);
       document.removeEventListener("mouseup", endDrag);
@@ -44,24 +49,43 @@ function Map() {
     };
   };
 
+  const onMarking = (e) => {
+    e.preventDefault();
+
+    if (!e.target.dataset.addMarker) {
+      return;
+    }
+
+    const { offsetX, offsetY } = e.nativeEvent;
+
+    pushMarker({ x: offsetX, y: offsetY });
+  };
+
   return (
-    <Container pos={pos} onMouseDown={onMouseDown}>
-      <img
-        src={mapImg}
-        alt="map"
+    <ViewPort onMouseDown={onMouseDown}>
+      <MapContainer
         style={{
           transform: `translate(${-pos.x}px, ${-pos.y}px)`,
         }}
-        onLoad={onLoad}
-        draggable="false"
-      />
-    </Container>
+        onContextMenu={onMarking}
+      >
+        <img
+          src={mapImg}
+          alt="map"
+          onLoad={onLoad}
+          draggable="false"
+          data-add-marker
+        />
+
+        <Marking marker={marker} />
+      </MapContainer>
+    </ViewPort>
   );
 }
 
 export default Map;
 
-const Container = styled.div`
+const ViewPort = styled.div`
   position: relative;
   width: ${VIEWPORT_SIZE.width}px;
   height: ${VIEWPORT_SIZE.height}px;
@@ -71,8 +95,9 @@ const Container = styled.div`
   &:active {
     cursor: grabbing;
   }
+`;
 
-  img {
-    position: absolute;
-  }
+const MapContainer = styled.div`
+  position: relative;
+  display: inline-block;
 `;
