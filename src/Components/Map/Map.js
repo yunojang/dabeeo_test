@@ -18,25 +18,36 @@ function Map() {
 
   const size = useRef({});
 
-  const move = (e) => {
-    const { movementX, movementY } = e;
+  const move = ([moveX, moveY]) => {
     const { width, height } = size.current;
     const maxPosX = width - VIEWPORT_SIZE.width;
     const maxPosY = height - VIEWPORT_SIZE.height;
 
     setPos((pos) => ({
-      x: getLimitValue(pos.x - movementX, { max: maxPosX, min: 0 }),
-      y: getLimitValue(pos.y - movementY, { max: maxPosY, min: 0 }),
+      x: getLimitValue(pos.x - moveX, { max: maxPosX, min: 0 }),
+      y: getLimitValue(pos.y - moveY, { max: maxPosY, min: 0 }),
     }));
   };
 
+  const onMove = (e) => {
+    const { movementX, movementY } = e;
+
+    move([movementX,movementY]);
+  }
+
   const onMouseDown = (e) => {
+    if (!e.target.dataset.movable) {
+      return;
+    }
+
     const endDrag = () => {
-      document.removeEventListener("mousemove", move);
+      // elastic move
+
+      document.removeEventListener("mousemove", onMove);
       document.removeEventListener("mouseup", endDrag);
     };
 
-    document.addEventListener("mousemove", move);
+    document.addEventListener("mousemove", onMove);
     document.addEventListener("mouseup", endDrag);
   };
 
@@ -75,6 +86,7 @@ function Map() {
           onLoad={onLoad}
           draggable="false"
           data-add-marker
+          data-movable
         />
 
         <Marking marker={marker} />
